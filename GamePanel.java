@@ -145,13 +145,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // - Si intersecten: invertir dy i reposicionar la pilota
         // just a sobre de la pala per evitar que es quedi "enganxada"
         // ============================================================
-        Rectangle rectPilota = new Rectangle(this.pilota.getX(), this.pilota.getY(), this.pilota.getDiametro(), this.pilota.getDiametro());
-        
-        Rectangle rectPala = new Rectangle(pala.getX(), pala.getY(), pala.getAmple(), pala.getAlt());
-        
+        Rectangle rectPilota = new Rectangle(pilota.getX(), pilota.getY(),
+                pilota.getDiametro(), pilota.getDiametro());
+        Rectangle rectPala = new Rectangle(pala.getX(), pala.getY(),
+                pala.getAmple(), pala.getAlt());
+
         if (rectPilota.intersects(rectPala)) {
-            this.pilota.invertirDy();
-            this.pilota.setY(pala.getY() - this.pilota.getDiametro());
+            pilota.invertirDy();
+            pilota.setY(pala.getY() - pilota.getDiametro()); // recolocar encima
         }
 
         // ============================================================
@@ -166,14 +167,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // · Fes break per sortir del bucle (1 col·lisió per frame)
         // - Després comprova si tots els totxos estan eliminats → gameOver = true
         // ============================================================
+        Rectangle rectPilota2 = new Rectangle(pilota.getX(), pilota.getY(),
+                pilota.getDiametro(), pilota.getDiametro());
 
+        for (int fila = 0; fila < FILES_TOTXOS; fila++) {
+            for (int col = 0; col < COLS_TOTXOS; col++) {
+                if (totxos[fila][col].isActiu()) {
+                    if (rectPilota2.intersects(totxos[fila][col].getRectangle())) {
+                        totxos[fila][col].setActiu(false);
+                        pilota.invertirDy();
+                        puntuacio += 10;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (totsEliminats()) {
+            gameOver = true;
+        }
         // ============================================================
         // TODO 6: Limitar el moviment de la pala (boundary clamping)
         // - Si la pala surt per l'esquerra (x < 0): posar x = 0
         // - Si la pala surt per la dreta (x + ample > getWidth):
         // posar x = getWidth - ample
         // ============================================================
-
+        if (pala.getX() < 0) {
+            pala.setX(0);
+        }
+        if (pala.getX() + pala.getAmple() > getWidth()) {
+            pala.setX(getWidth() - pala.getAmple());
+        }
         repaint();
     }
 
