@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    private static final int DIAMETRO = 15;
     // Elements del joc
     private Pilota pilota;
     private Pala pala;
